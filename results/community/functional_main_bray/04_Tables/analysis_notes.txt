@@ -1,0 +1,5 @@
+Canonical source script:
+/Users/dingchenchen/lucc/功能同质化.R
+
+This rewrite keeps Bray total / turnover / gradient in ATA space as the main narrative.
+Functional Jaccard/Sorensen are intentionally excluded from the main plots because ATA>0 is nearly degenerate in the current data.
