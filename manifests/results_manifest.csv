@@ -1,0 +1,11 @@
+result_group,release_path,status,tracked_scope,source_note
+community_diversity_main,results/community/diversity_main_nb,included,full_release_preview,Cleaned rewritten diversity outputs with figures tables and compact model objects
+community_compositional_main,results/community/compositional_main_bray,included,lightweight_public_release,Cleaned Bray-based compositional outputs with preview source data and fixed-effect tables; heavy source model binaries may be omitted
+community_functional_main,results/community/functional_main_bray,included,lightweight_public_release,Cleaned ATA-Bray functional outputs with preview source data and fixed-effect tables; heavy source model binaries may be omitted
+community_assessment_note,results/community/community_assessment_and_rewrite_summary_CN.md,included,documentation,Chinese synthesis of the community-analysis rewrite
+traits_fg_diagnosis,results/traits_fg/RQ3_trait_analysis_diagnosis_CN.md,included,documentation,Chinese diagnosis for RQ3 trait analyses
+traits_fg_diagnosis_en,results/traits_fg/RQ3_trait_analysis_diagnosis_EN.md,included,documentation,English diagnosis for RQ3 trait analyses
+traits_fg_glmmtmb_interpretation,results/traits_fg/glmmtmb_stable_fg_interpretation,included,key_preview,Key interpretation figures from the stable FG glmmTMB workflow
+traits_fg_glmmtmb_tables,results/traits_fg/glmmtmb_stable_fg_tables,included,key_preview,Key FG interpretation tables from the stable FG workflow
+project_report_fg_summary,results/project_reports/RQ3_FG_stable_scheme_summary.pptx,included,editable_report,Editable summary deck
+large_historical_results,original_workspace_only,not_included,manifest_only,Large original output directories remain in the workspace but are not all tracked in GitHub

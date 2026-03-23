@@ -1,0 +1,18 @@
+task_id,stage,status,canonical_level,release_script,primary_outputs,notes
+setup_requirements,00_setup,active,canonical,scripts/00_setup/00_install_requirements.R,Package installation and external-data guidance,Initial environment script inherited from the original project
+prepare_predicts_data,01_data_prep,active,canonical,scripts/01_data_prep/01_prepare_predicts_data.R,Processed bird PREDICTS site and species objects,Starting point for the bird-focused pipeline
+prepare_climate_index_maps,01_data_prep,active,canonical,scripts/01_data_prep/02_prepare_climate_index_maps.R,Climate anomaly rasters and exploratory maps,Builds spatial climate covariates
+match_predicts_climate,01_data_prep,active,canonical,scripts/01_data_prep/03_match_predicts_climate_index.R,Site-level climate matching outputs,Links sites to climate anomalies
+match_predicts_nathab,01_data_prep,active,canonical,scripts/01_data_prep/04_match_predicts_prop_natural_habitat.R,Natural habitat covariates,Links sites to habitat context
+simple_lui_model,02_baselines,active,supplementary,scripts/02_baselines/01_run_simple_lui_model.R,Simple land-use baseline outputs,Baseline model layer
+landuse_region_models,02_baselines,active,supplementary,scripts/02_baselines/02_landuse_region_models_update.R,Regional model outputs,Useful extension rather than primary mainline
+lu_climate_main_models,03_main_models,active,canonical,scripts/03_main_models/01_run_lu_climate_models_main.R,Main abundance and richness LUCC outputs,Default global main model workflow
+lu_climate_brms,03_main_models,active,robustness,scripts/03_main_models/02_run_lu_climate_models_brms.R,Bayesian robustness outputs,Heavy to rerun
+tropical_extension,03_main_models,active,supplementary,scripts/03_main_models/03_run_tropical_extension.R,Tropical extension outputs,Extension analysis
+community_diversity_rewrite,04_community,active,canonical,scripts/04_community/01_diversity_main_rewrite.R,results/community/diversity_main_nb,Cleaned diversity release
+community_compositional_rewrite,04_community,active,canonical,scripts/04_community/02_compositional_main_rewrite.R,results/community/compositional_main_bray,Cleaned Bray-based compositional release
+community_functional_rewrite,04_community,active,canonical,scripts/04_community/03_functional_main_rewrite.R,results/community/functional_main_bray,Cleaned ATA-Bray functional release
+trait_single_trait_occurrence,05_traits_occurrence,archival,diagnostic_only,scripts/05_traits_occurrence/01_single_trait_threeway_occurrence.R,Legacy single-trait outputs,Kept for transparency; contains historical path dependence
+trait_multitrait_screening,05_traits_occurrence,active,supplementary,scripts/05_traits_occurrence/02_multitrait_screening_occurrence.R,Multi-trait screening outputs,Useful as screening/robustness rather than sole main test
+fg_stable_glmmtmb,05_traits_occurrence,active,canonical,scripts/05_traits_occurrence/03_fg_stable_glmmtmb.R,Stable FG glmmTMB outputs,Recommended main functional-group result family
+fg_stable_brms,05_traits_occurrence,active,robustness,scripts/05_traits_occurrence/04_fg_stable_brms.R,Stable FG Bayesian outputs,Bayesian extension of the stable FG workflow

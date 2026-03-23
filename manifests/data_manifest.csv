@@ -1,0 +1,13 @@
+data_id,release_path_or_source,type,status,size_or_source,how_to_obtain,notes
+predicts_birds_species_level,data/derived_public/predicts_birds_species_level.rds,derived_rds,included,3.0M,Tracked in repository,Species-level bird subset used repeatedly in downstream analyses
+predicts_sites_used,data/derived_public/predicts_sites_used.rds,derived_rds,included,791K,Tracked in repository,Processed site-level data used by the cleaned diversity release
+occurrence_trait_data,data/derived_public/occurrence_trait_data.rds,derived_rds,included,4.4M,Tracked in repository,Occurrence-by-trait working dataset for trait-based analyses
+occurrence_trait_data_with_stable_fg,data/derived_public/occurrence_trait_data_with_stable_fg.rds,derived_rds,included,4.1M,Tracked in repository,Occurrence dataset joined to the stable functional-group assignment
+compositional_pairs_with_covariates,data/derived_public/compositional_pairs_with_covariates.rds,derived_rds,included,5.4M,Tracked in repository,Pair-level compositional dissimilarity table with covariates
+functional_pairs_with_covariates,data/derived_public/functional_pairs_with_covariates.rds,derived_rds,included,5.6M,Tracked in repository,Pair-level functional dissimilarity table with covariates
+predicts_raw_2016,external,PREDICTS_raw,external_public,https://data.nhm.ac.uk/dataset/the-2016-release-of-the-predicts-database,Download from source URL or rebuild through the original workflow,Upstream raw data
+predicts_raw_2022_addition,external,PREDICTS_raw,external_public,https://data.nhm.ac.uk/dataset/release-of-data-added-to-the-predicts-database-november-2022,Download from source URL or rebuild through the original workflow,Upstream added release
+cru_tmp_tmx,external,climate_raw,external_public,https://crudata.uea.ac.uk/cru/data/hrg/,Download manually as documented in setup script,Used to build anomaly layers
+hoskins_natural_habitat,external,habitat_raster,external_public,http://doi.org/10.4225/08/56DCD9249B224,Download manually as documented in setup script,Used for natural habitat covariates
+full_0_data,not_tracked/raw_workspace,local_heavy,not_included,22G,Keep locally or rebuild from public sources,Too large for practical GitHub tracking
+large_brms_fit_objects,not_tracked/local_models,model_object,not_included,>100M local outputs,Regenerate locally,Heavy Bayesian fit files are not fully versioned

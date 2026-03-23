@@ -1,0 +1,26 @@
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user
+*.Rproj
+*.tar.gz
+*.zip
+*.rar
+*.tmp
+*.log
+*.bak
+*.html
+
+# Local heavy outputs that should not be committed by default
+cache/
+tmp/
+local_only/
+
+# Large Bayesian fits and temporary CmdStan outputs
+*_cmdstan*.csv
+*_cmdstan*.json
+*_fit.rds
+
+# Large public-release preview models can be regenerated locally
+results/community/compositional_main_bray/source_models/
+results/community/functional_main_bray/source_models/
