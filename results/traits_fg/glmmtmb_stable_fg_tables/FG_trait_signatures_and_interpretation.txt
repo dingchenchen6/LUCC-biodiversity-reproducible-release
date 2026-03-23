@@ -1,0 +1,68 @@
+========== FG CLUSTER SELECTION ==========
+   method K silhouette min_n   min_prop        cluster_sizes
+1  kmeans 3  0.2454938   588 0.20667838         588,828,1429
+2  kmeans 2  0.2611074  1120 0.39367311            1120,1725
+3  kmeans 5  0.2028075   210 0.07381371  210,479,564,608,984
+4     pam 5  0.1669785   366 0.12864675  366,401,562,684,832
+5    ward 5  0.1467774   252 0.08857645 252,310,501,769,1013
+6  kmeans 4  0.1994189   437 0.15360281     437,536,777,1095
+7     pam 4  0.1750424   529 0.18594025      529,625,844,847
+8    ward 4  0.1529706   310 0.10896309    310,501,1013,1021
+9     pam 3  0.2065508   710 0.24956063         710,982,1153
+10   ward 3  0.1564637   501 0.17609842        501,1021,1323
+11    pam 2  0.2701933   948 0.33321617             948,1897
+12   ward 2  0.1659079  1021 0.35887522            1021,1824
+   mean_cluster_jaccard min_cluster_jaccard eligible near_best_sil
+1             0.6049155           0.5988452     TRUE          TRUE
+2             0.6205688           0.6180802     TRUE          TRUE
+3             0.5811021           0.5590300    FALSE         FALSE
+4             0.4164724           0.3325678    FALSE         FALSE
+5             0.3233370           0.2731984    FALSE         FALSE
+6             0.5638078           0.5476571    FALSE         FALSE
+7             0.5200266           0.4974256    FALSE         FALSE
+8             0.3178942           0.2681667    FALSE         FALSE
+9             0.5243613           0.5052154    FALSE         FALSE
+10            0.3608206           0.3132337    FALSE         FALSE
+11            0.5275599           0.5122706    FALSE          TRUE
+12            0.4193274           0.4082771    FALSE         FALSE
+   final_candidate
+1             TRUE
+2             TRUE
+3            FALSE
+4            FALSE
+5            FALSE
+6            FALSE
+7            FALSE
+8            FALSE
+9            FALSE
+10           FALSE
+11           FALSE
+12           FALSE
+
+Chosen method: kmeans 
+Chosen K: 3 
+Bootstrap B: 40 
+
+========== FG TRAIT SIGNATURES (RAW-TRAIT Z-SCORES) ==========
+# A tibble: 3 × 9
+  FG        RS      HB     TR    HWI     GL      CS     BM n_species
+  <fct>  <dbl>   <dbl>  <dbl>  <dbl>  <dbl>   <dbl>  <dbl>     <int>
+1 FG1    0.368  0.0840  0.288  0.734  1.37   0.0322  0.537       588
+2 FG2    0.509  0.614   0.873  0.135 -0.372  0.614  -0.137       828
+3 FG3   -0.446 -0.390  -0.625 -0.380 -0.348 -0.369  -0.142      1429
+
+========== DOMINANT TRAITS (TOP-|Z|) ==========
+# A tibble: 3 × 2
+  FG    Dominant_traits_topk            
+  <fct> <chr>                           
+1 FG1   GL: +1.37; HWI: +0.73; BM: +0.54
+2 FG2   TR: +0.87; CS: +0.61; HB: +0.61 
+3 FG3   TR: -0.62; RS: -0.45; HB: -0.39 
+
+========== ECOLOGICAL INTERPRETATION ==========
+# A tibble: 3 × 5
+  FG    n_species Dominant_traits_topk       Interpretation_EN Interpretation_CN
+  <fct>     <int> <chr>                      <chr>             <chr>            
+1 FG1         588 GL: +1.37; HWI: +0.73; BM… Slow-history and… 慢生活史-高扩散组：世代时间较长…
+2 FG2         828 TR: +0.87; CS: +0.61; HB:… Thermally broade… 热耐受较宽-生境泛化-较高繁殖输…
+3 FG3        1429 TR: -0.62; RS: -0.45; HB:… Range-restricted… 地方性/专性策略组：分布范围较小…
