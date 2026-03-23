@@ -1,0 +1,42 @@
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: LogAbund ~ UI2 * StdTmaxAnomalyRS + (1 | SS) + (1 | SSB)
+   Data: dat_ab_max
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  14717.2   14803.7   -7345.6   14691.2      5721 
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.4744 -0.4534  0.0377  0.4993  5.1362 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ SSB      (Intercept) 0.1661   0.4076  
+ SS       (Intercept) 0.7193   0.8481  
+ Residual             0.6693   0.8181  
+Number of obs: 5734, groups:  SSB, 578; SS, 119
+
+Fixed effects:
+                                         Estimate Std. Error t value
+(Intercept)                              -1.25273    0.08890 -14.092
+UI2Secondary vegetation                  -0.02047    0.04211  -0.486
+UI2Agriculture_Low                       -0.22131    0.04524  -4.892
+UI2Agriculture_High                       0.03169    0.04669   0.679
+UI2Urban                                 -0.39135    0.14114  -2.773
+StdTmaxAnomalyRS                          0.04659    0.04486   1.039
+UI2Secondary vegetation:StdTmaxAnomalyRS  0.06383    0.04240   1.506
+UI2Agriculture_Low:StdTmaxAnomalyRS       0.07808    0.04094   1.907
+UI2Agriculture_High:StdTmaxAnomalyRS     -0.04778    0.03962  -1.206
+UI2Urban:StdTmaxAnomalyRS                -0.45677    0.22713  -2.011
+
+Correlation of Fixed Effects:
+            (Intr) UI2Scv UI2Ag_L UI2Ag_H UI2Urb StTARS UI2Sv: UI2A_L: UI2A_H:
+UI2Scndryvg -0.161                                                            
+UI2Agrclt_L -0.148  0.404                                                     
+UI2Agrclt_H -0.154  0.421  0.311                                              
+UI2Urban    -0.057  0.064  0.084   0.059                                      
+StdTmxAnmRS -0.001  0.026 -0.006  -0.009  -0.021                              
+UI2Sv:STARS  0.013 -0.191 -0.078  -0.091  -0.002 -0.212                       
+UI2A_L:STAR  0.014 -0.066 -0.023  -0.037   0.008 -0.160  0.338                
+UI2A_H:STAR  0.025 -0.077 -0.048  -0.130   0.009 -0.161  0.167  0.120         
+UI2Ur:STARS -0.024  0.024  0.015   0.026   0.742 -0.039  0.021  0.050   0.024 

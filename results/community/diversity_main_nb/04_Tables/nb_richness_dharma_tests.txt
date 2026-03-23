@@ -1,0 +1,59 @@
+Mean anomaly richness NB
+
+	DHARMa nonparametric dispersion test via sd of residuals fitted vs.
+	simulated
+
+data:  simulationOutput
+dispersion = 0.13072, p-value < 2.2e-16
+alternative hypothesis: two.sided
+
+
+	DHARMa zero-inflation test via comparison to expected zeros with
+	simulation under H0 = fitted model
+
+data:  simulationOutput
+ratioObsSim = 1.2498, p-value = 0.412
+alternative hypothesis: two.sided
+
+
+	DHARMa bootstrapped outlier test
+
+data:  diag_mean
+outliers at both margin(s) = 0, observations = 6457, p-value = 0.12
+alternative hypothesis: two.sided
+ percent confidence interval:
+ 0.00000000 0.02022224
+sample estimates:
+outlier frequency (expected: 0.00327086882453152 ) 
+                                                 0 
+
+
+Max anomaly richness NB
+
+	DHARMa nonparametric dispersion test via sd of residuals fitted vs.
+	simulated
+
+data:  simulationOutput
+dispersion = 0.10162, p-value < 2.2e-16
+alternative hypothesis: two.sided
+
+
+	DHARMa zero-inflation test via comparison to expected zeros with
+	simulation under H0 = fitted model
+
+data:  simulationOutput
+ratioObsSim = 1.2251, p-value = 0.448
+alternative hypothesis: two.sided
+
+
+	DHARMa bootstrapped outlier test
+
+data:  diag_max
+outliers at both margin(s) = 0, observations = 6457, p-value = 0.14
+alternative hypothesis: two.sided
+ percent confidence interval:
+ 0.0000000 0.0112862
+sample estimates:
+outlier frequency (expected: 0.00269320117701719 ) 
+                                                 0 
+

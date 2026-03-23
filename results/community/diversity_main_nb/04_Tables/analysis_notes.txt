@@ -1,0 +1,5 @@
+Canonical source script:
+/Users/dingchenchen/lucc/6_RunLUClimateModel_new.R
+
+This rewrite replaces Poisson richness as the default main model with negative-binomial mixed models.
+Important note: DHARMa still indicates residual dispersion departures, but the severe Poisson overdispersion problem is no longer the main issue.

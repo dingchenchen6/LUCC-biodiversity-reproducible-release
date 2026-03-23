@@ -1,0 +1,45 @@
+ Family: nbinom2  ( log )
+Formula:          
+Species_richness ~ UI2 * StdTmaxAnomalyRS + (1 | SS) + (1 | SSB) +  
+    (1 | SSBS)
+Data: dat_rich_max
+
+      AIC       BIC    logLik -2*log(L)  df.resid 
+  38520.6   38615.4  -19246.3   38492.6      6443 
+
+Random effects:
+
+Conditional model:
+ Groups Name        Variance Std.Dev.
+ SS     (Intercept) 1.19996  1.0954  
+ SSB    (Intercept) 0.06359  0.2522  
+ SSBS   (Intercept) 0.14474  0.3804  
+Number of obs: 6457, groups:  SS, 138; SSB, 599; SSBS, 6457
+
+Dispersion parameter for nbinom2 family (): 7.98e+06 
+
+Conditional model:
+                                           Estimate Std. Error z value Pr(>|z|)
+(Intercept)                               2.3806468  0.0974756  24.423  < 2e-16
+UI2Secondary vegetation                   0.0005804  0.0320276   0.018 0.985540
+UI2Agriculture_Low                       -0.3474836  0.0303744 -11.440  < 2e-16
+UI2Agriculture_High                      -0.1192955  0.0298608  -3.995 6.47e-05
+UI2Urban                                  0.1785304  0.0500540   3.567 0.000361
+StdTmaxAnomalyRS                         -0.0740893  0.0317052  -2.337 0.019448
+UI2Secondary vegetation:StdTmaxAnomalyRS  0.0596712  0.0240230   2.484 0.012994
+UI2Agriculture_Low:StdTmaxAnomalyRS       0.1376935  0.0251564   5.473 4.41e-08
+UI2Agriculture_High:StdTmaxAnomalyRS     -0.0181900  0.0281707  -0.646 0.518470
+UI2Urban:StdTmaxAnomalyRS                 0.2594803  0.1024594   2.533 0.011325
+                                            
+(Intercept)                              ***
+UI2Secondary vegetation                     
+UI2Agriculture_Low                       ***
+UI2Agriculture_High                      ***
+UI2Urban                                 ***
+StdTmaxAnomalyRS                         *  
+UI2Secondary vegetation:StdTmaxAnomalyRS *  
+UI2Agriculture_Low:StdTmaxAnomalyRS      ***
+UI2Agriculture_High:StdTmaxAnomalyRS        
+UI2Urban:StdTmaxAnomalyRS                *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
