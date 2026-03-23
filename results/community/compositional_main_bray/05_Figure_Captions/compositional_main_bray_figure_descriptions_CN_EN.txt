@@ -1,0 +1,24 @@
+[Fig1] Fig1_Compositional_pair_climate_support
+CN: 群落组成结构配对样本在气候梯度上的支撑分布
+EN: Empirical climate support for compositional site pairs
+Key points CN: 不同土地利用类型的 pair_clim_mean 支撑范围并不一致，Urban 最窄，因此主图预测必须限制在经验支撑区间内。
+Key points EN: Climate support differs by land-use type, with Urban showing the narrowest range; this justifies clipping predictions to the empirical support.
+
+[Fig2] Fig2_Compositional_Bray_absolute_predictions
+CN: 群落组成 Bray 主结果显示不同土地利用类型对变暖的响应轨迹不同
+EN: Bray-based compositional responses to warming differ across land-use types
+Key points CN: Bray total、turnover 和 gradient 的主图能够覆盖组成结构变化的整体、替代和梯度三层含义，比把 9 个指标并列展示更集中、更易解释。
+Key points EN: Bray total, turnover, and gradient together capture overall dissimilarity, replacement, and gradient components, providing a clearer main narrative than showing all nine metrics in parallel.
+
+[Fig3] Fig3_Compositional_Bray_diff_vsPV0
+CN: 相对于固定的原生植被基线，农业与次生植被在部分 Bray 组成维度上表现出更高的差异化
+EN: Relative to the fixed Primary-vegetation baseline, some modified land uses show elevated Bray dissimilarity
+Key points CN: 固定 PV@0 基线更适合答辩和写作，因为它避免了“同气候条件下的 PV 对照”被误解为真实配对观测值。
+Key points EN: The fixed PV@0 baseline is easier to explain because it avoids confusing same-climate PV contrasts with observed pairwise comparisons.
+
+[Fig4] Fig4_Compositional_Bray_warming_coefficients
+CN: 组成结构 Bray 主线的气候相关系数显示不同组分对变暖的敏感性并不一致
+EN: Warming-related coefficients differ across the compositional Bray components
+Key points CN: 这一图把主效应和土地利用特异的气候交互放在同一坐标系中，更适合快速判断哪一部分是 warming-sensitive。
+Key points EN: Placing the climate main effect and land-use-specific climate interactions on the same axis makes it easier to see which Bray component is most warming-sensitive.
+

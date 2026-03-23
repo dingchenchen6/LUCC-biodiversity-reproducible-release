@@ -1,0 +1,9 @@
+Canonical source script:
+/Users/dingchenchen/lucc/群落同质性_dissimilarity1.R
+
+This rewrite keeps Bray total / turnover / gradient as the main narrative.
+Jaccard and Sorensen remain supplementary and are not re-plotted here.
+
+Support warning:
+- Urban climate support is narrow.
+- Predictions should be interpreted only within the empirical pair_clim_mean range of each land-use type.
