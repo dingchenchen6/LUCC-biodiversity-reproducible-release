@@ -35,15 +35,20 @@ theme_paper <- function(base_size = 11) {
       panel.grid.minor = element_blank(),
       panel.grid.major = element_line(linewidth = 0.25, colour = "grey85"),
       panel.border = element_rect(linewidth = 0.4, colour = "black"),
+      panel.spacing = unit(1.0, "lines"),
       axis.ticks = element_line(linewidth = 0.3),
+      axis.title.x = element_text(margin = margin(t = 8)),
+      axis.title.y = element_text(margin = margin(r = 8)),
+      axis.text.x = element_text(margin = margin(t = 3)),
       legend.title = element_blank(),
       legend.background = element_blank(),
+      legend.box.margin = margin(2, 2, 2, 2),
       strip.background = element_rect(fill = "grey95", colour = "black", linewidth = 0.35),
-      strip.text = element_text(face = "bold"),
+      strip.text = element_text(face = "bold", lineheight = 0.95),
       plot.title = element_text(face = "bold", hjust = 0),
       plot.subtitle = element_text(hjust = 0),
       plot.caption = element_text(hjust = 0),
-      plot.margin = margin(8, 14, 8, 8)
+      plot.margin = margin(12, 24, 14, 14)
     )
 }
 
@@ -54,8 +59,10 @@ save_plot_3formats <- function(p, prefix, out_dir, width_mm = 183, height_mm = 1
   png_path <- file.path(out_dir, paste0(prefix, ".png"))
   ppt_path <- file.path(out_dir, paste0(prefix, ".pptx"))
 
-  ggsave(pdf_path, p, width = width_mm, height = height_mm, units = "mm", dpi = dpi_pdf)
-  ggsave(png_path, p, width = width_mm, height = height_mm, units = "mm", dpi = dpi_png)
+  ggsave(pdf_path, p, width = width_mm, height = height_mm, units = "mm",
+         dpi = dpi_pdf, bg = "white", limitsize = FALSE)
+  ggsave(png_path, p, width = width_mm, height = height_mm, units = "mm",
+         dpi = dpi_png, bg = "white", limitsize = FALSE)
 
   doc <- read_pptx()
   doc <- add_slide(doc, layout = "Title and Content", master = "Office Theme")
@@ -64,7 +71,11 @@ save_plot_3formats <- function(p, prefix, out_dir, width_mm = 183, height_mm = 1
     value = if (is.null(slide_title)) prefix else slide_title,
     location = ph_location_type(type = "title")
   )
-  doc <- ph_with(doc, dml(ggobj = p), location = ph_location_fullsize())
+  body_loc <- tryCatch(
+    ph_location_type(type = "body"),
+    error = function(e) ph_location_fullsize()
+  )
+  doc <- ph_with(doc, dml(ggobj = p), location = body_loc)
   print(doc, target = ppt_path)
 
   invisible(list(pdf = pdf_path, png = png_path, ppt = ppt_path))
@@ -147,3 +158,35 @@ label_map_ui2 <- c(
   "Agriculture_High" = "Agriculture (high)",
   "Urban" = "Urban"
 )
+
+label_map_ui2_wrap <- c(
+  "Primary vegetation" = "Primary\nvegetation",
+  "Secondary vegetation" = "Secondary\nvegetation",
+  "Agriculture_Low" = "Agriculture\n(low)",
+  "Agriculture_High" = "Agriculture\n(high)",
+  "Urban" = "Urban"
+)
+
+label_map_metric <- c(
+  "Bray-Curtis" = "Bray-Curtis",
+  "Jaccard" = "Jaccard",
+  "Sorensen" = "Sorensen"
+)
+
+label_map_component <- c(
+  "Total" = "Total",
+  "Turnover" = "Turnover",
+  "Gradient/Nestedness" = "Gradient or nestedness"
+)
+
+pretty_climate_term <- function(term) {
+  dplyr::recode(
+    term,
+    "pair_clim_mean" = "Climate main effect",
+    "UI2Secondary vegetation:pair_clim_mean" = "Secondary vegetation x climate",
+    "UI2Agriculture_Low:pair_clim_mean" = "Agriculture (low) x climate",
+    "UI2Agriculture_High:pair_clim_mean" = "Agriculture (high) x climate",
+    "UI2Urban:pair_clim_mean" = "Urban x climate",
+    .default = term
+  )
+}

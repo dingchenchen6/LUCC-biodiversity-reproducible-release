@@ -100,6 +100,22 @@ names(pal_UI2) <- UI2_levels
 pal_FG <- c("FG1" = "#F05A5A", "FG2" = "#19B51E", "FG3" = "#4E79FF",
             "FG4" = "#E7298A", "FG5" = "#66A61E")
 
+fg_feature_labels <- c(
+  "FG1" = "FG1: slow-history and large-bodied",
+  "FG2" = "FG2: broad niche and higher fecundity",
+  "FG3" = "FG3: restricted and low-dispersal",
+  "FG4" = "FG4",
+  "FG5" = "FG5"
+)
+
+fg_strip_labels <- c(
+  "FG1" = "FG1\nslow-history / large-bodied",
+  "FG2" = "FG2\nbroad niche / fecundity",
+  "FG3" = "FG3\nrestricted / low-dispersal",
+  "FG4" = "FG4",
+  "FG5" = "FG5"
+)
+
 TITLE_SIZE <- 14
 BASE_SIZE  <- 13
 
@@ -140,11 +156,11 @@ save_plot_3formats <- function(p, filename_noext, outdir,
   print(p)
   if (requireNamespace("ragg", quietly = TRUE)) {
     ggsave(png_file, p, width = width, height = height, dpi = dpi,
-           device = ragg::agg_png, bg = "white")
+           device = ragg::agg_png, bg = "white", limitsize = FALSE)
   } else {
-    ggsave(png_file, p, width = width, height = height, dpi = dpi, bg = "white")
+    ggsave(png_file, p, width = width, height = height, dpi = dpi, bg = "white", limitsize = FALSE)
   }
-  ggsave(pdf_file, p, width = width, height = height)
+  ggsave(pdf_file, p, width = width, height = height, bg = "white", limitsize = FALSE)
 
   if (exists("topptx")) {
     topptx(p, pptx_file)
@@ -152,7 +168,11 @@ save_plot_3formats <- function(p, filename_noext, outdir,
              requireNamespace("rvg", quietly = TRUE)) {
     doc <- officer::read_pptx()
     doc <- officer::add_slide(doc, layout = "Title and Content", master = "Office Theme")
-    doc <- officer::ph_with(doc, rvg::dml(ggobj = p), location = officer::ph_location_fullsize())
+    body_loc <- tryCatch(
+      officer::ph_location_type(type = "body"),
+      error = function(e) officer::ph_location_fullsize()
+    )
+    doc <- officer::ph_with(doc, rvg::dml(ggobj = p), location = body_loc)
     print(doc, target = pptx_file)
   } else {
     message("PPTX export skipped: ", pptx_file)
@@ -165,11 +185,14 @@ theme_paper <- function(base_size = 13) {
     theme(
       plot.title = element_text(face = "bold", size = TITLE_SIZE),
       plot.subtitle = element_text(size = base_size),
+      panel.spacing = unit(1.0, "lines"),
       strip.background = element_rect(fill = "white", color = "black"),
-      strip.text = element_text(face = "bold"),
+      strip.text = element_text(face = "bold", lineheight = 0.95),
       axis.title = element_text(face = "bold"),
+      axis.title.x = element_text(margin = margin(t = 8)),
+      axis.title.y = element_text(margin = margin(r = 8)),
       legend.title = element_text(face = "bold"),
-      plot.margin = margin(t = 10, r = 16, b = 16, l = 10)
+      plot.margin = margin(t = 12, r = 24, b = 18, l = 14)
     )
 }
 
@@ -226,6 +249,14 @@ label_map_UI2_wrap <- c(
   "Secondary vegetation" = "Secondary\nvegetation",
   "Agriculture_Low"      = "Agriculture\n(low)",
   "Agriculture_High"     = "Agriculture\n(high)",
+  "Urban"                = "Urban"
+)
+
+label_map_UI2_compact <- c(
+  "Primary vegetation"   = "Primary\nveg.",
+  "Secondary vegetation" = "Secondary\nveg.",
+  "Agriculture_Low"      = "Agri.\n(low)",
+  "Agriculture_High"     = "Agri.\n(high)",
   "Urban"                = "Urban"
 )
 
@@ -659,8 +690,9 @@ myocc_fg <- myoccdata %>%
   dplyr::left_join(pc_scores %>% dplyr::select(all_of(sp_col), FG), by = sp_col) %>%
   dplyr::filter(!is.na(FG))
 
-myocc_fg$FG <- factor(myocc_fg$FG, levels = levels(pc_scores$FG))
-FG_base <- names(which.max(table(myocc_fg$FG)))
+fg_plot_levels <- levels(pc_scores$FG)
+myocc_fg$FG <- factor(myocc_fg$FG, levels = fg_plot_levels)
+FG_base <- fg_plot_levels[1]
 myocc_fg$FG <- relevel(myocc_fg$FG, ref = FG_base)
 
 saveRDS(myocc_fg, file.path(dir_data, "myoccdata_with_FG.rds"))
@@ -733,8 +765,10 @@ p_biplot <- ggplot() +
                 size = 3.0, fontface = "bold", vjust = -0.6)
     }
   } +
-  scale_colour_manual(values = pal_FG, drop = FALSE, name = "FG") +
-  scale_fill_manual(values = pal_FG, drop = FALSE, name = "FG") +
+  scale_colour_manual(values = pal_FG, drop = FALSE, name = "Functional strategy group",
+                      labels = fg_feature_labels[levels(pc12$FG)]) +
+  scale_fill_manual(values = pal_FG, drop = FALSE, name = "Functional strategy group",
+                    labels = fg_feature_labels[levels(pc12$FG)]) +
   coord_fixed(1, xlim = c(-lim, lim), ylim = c(-lim, lim), clip = "off") +
   theme_paper(BASE_SIZE) +
   labs(
@@ -769,14 +803,15 @@ fg_profile_bar_long <- fg_profile_long %>%
 p_profile_bar <- ggplot(fg_profile_bar_long, aes(Trait, Z, fill = FG)) +
   geom_col(position = position_dodge(width = 0.75), width = 0.68) +
   geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.6) +
-  scale_fill_manual(values = pal_FG, drop = FALSE) +
+  scale_fill_manual(values = pal_FG, drop = FALSE,
+                    labels = fg_feature_labels[levels(fg_profile_bar_long$FG)]) +
   theme_paper(BASE_SIZE) +
   labs(
     title = "Trait syndromes defining functional strategy groups (FG)",
     subtitle = "Mean z-score across species (positive = above overall mean; negative = below overall mean).",
     x = NULL,
     y = "Mean z-score (traits standardised across species)",
-    fill = "FG"
+    fill = "Functional strategy group"
   )
 save_plot_3formats(p_profile_bar, "Fig4_FG_trait_profiles_Zscore_bar", dir_expl,
                    width = 10.6, height = 6.6)
@@ -912,16 +947,19 @@ saveRDS(pred_pct3, file.path(dir_data, "pred_pct_threeway_vsPV0_glmmTMB_fastCI.r
 
 pred_abs3$UI2 <- factor(pred_abs3$UI2, levels = UI2_levels)
 pred_pct3$UI2 <- factor(pred_pct3$UI2, levels = UI2_levels)
+pred_abs3$FG <- factor(pred_abs3$FG, levels = fg_plot_levels)
+pred_pct3$FG <- factor(pred_pct3$FG, levels = fg_plot_levels)
 pred_abs3 <- pred_abs3 %>% dplyr::arrange(FG, UI2, StdTmeanAnomalyRS)
 pred_pct3 <- pred_pct3 %>% dplyr::arrange(FG, UI2, StdTmeanAnomalyRS)
 
 p_abs3 <- ggplot(pred_abs3, aes(x = StdTmeanAnomalyRS, colour = UI2, fill = UI2)) +
   geom_ribbon(aes(ymin = low95, ymax = high95), alpha = 0.22, colour = NA) +
   geom_line(aes(y = mean), linewidth = 1.05) +
-  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2)) +
+  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2_wrap, FG = fg_strip_labels)) +
   scale_colour_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   scale_fill_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   theme_paper(BASE_SIZE) +
+  theme(strip.text.y = element_text(angle = 0)) +
   labs(
     title = "Occurrence responses to land use and warming differ among functional strategy groups",
     subtitle = "glmmTMB fixed effects; fast 95% CI via link-scale normal approximation.",
@@ -929,7 +967,7 @@ p_abs3 <- ggplot(pred_abs3, aes(x = StdTmeanAnomalyRS, colour = UI2, fill = UI2)
     y = "Predicted probability of occurrence"
   )
 save_plot_3formats(p_abs3, "Fig1_ThreeWay_ABS_UI2_Temp_FG_glmmTMB_fastCI", dir_plots3,
-                   width = 12.2, height = 7.2)
+                   width = 13.2, height = 7.8)
 add_figure_caption(
   "Fig1_ThreeWay_ABS_UI2_Temp_FG_glmmTMB_fastCI", dir_plots3,
   "Occurrence responses to land use and warming differ among functional strategy groups",
@@ -941,10 +979,11 @@ p_pct3 <- ggplot(pred_pct3, aes(x = StdTmeanAnomalyRS, colour = UI2, fill = UI2)
   geom_ribbon(aes(ymin = low95, ymax = high95), alpha = 0.22, colour = NA) +
   geom_line(aes(y = mean), linewidth = 1.05) +
   geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.5) +
-  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2)) +
+  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2_wrap, FG = fg_strip_labels)) +
   scale_colour_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   scale_fill_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   theme_paper(BASE_SIZE) +
+  theme(strip.text.y = element_text(angle = 0)) +
   labs(
     title = "Relative warming responses of occurrence probability across land uses and strategy groups",
     subtitle = paste0(
@@ -955,7 +994,7 @@ p_pct3 <- ggplot(pred_pct3, aes(x = StdTmeanAnomalyRS, colour = UI2, fill = UI2)
     y = "Percent change in predicted occurrence probability (%)"
   )
 save_plot_3formats(p_pct3, "Fig2_ThreeWay_PCT_vsPV0_UI2_Temp_FG_glmmTMB_fastCI", dir_plots3,
-                   width = 12.2, height = 7.2)
+                   width = 13.2, height = 7.8)
 add_figure_caption(
   "Fig2_ThreeWay_PCT_vsPV0_UI2_Temp_FG_glmmTMB_fastCI", dir_plots3,
   "Relative warming responses of occurrence probability across land uses and strategy groups",
@@ -1041,20 +1080,23 @@ fgtemp_df <- nd_FGTemp %>%
   dplyr::arrange(FG, StdTmeanAnomalyRS)
 fgtemp_sum <- cbind(fgtemp_df, as.data.frame(summ_prob_sims(collapsed_FGTemp)))
 fgtemp_sum <- fgtemp_sum %>% dplyr::arrange(FG, StdTmeanAnomalyRS)
+fgtemp_sum$FG <- factor(fgtemp_sum$FG, levels = fg_plot_levels)
 
 p_fgtemp <- ggplot(fgtemp_sum, aes(x = StdTmeanAnomalyRS, y = mean, color = FG, fill = FG)) +
   geom_ribbon(aes(ymin = low95, ymax = high95), alpha = 0.20, colour = NA) +
   geom_line(linewidth = 1.05) +
-  scale_color_manual(values = pal_FG, drop = FALSE) +
-  scale_fill_manual(values = pal_FG, drop = FALSE) +
+  scale_color_manual(values = pal_FG, drop = FALSE,
+                     labels = fg_feature_labels[levels(fgtemp_sum$FG)]) +
+  scale_fill_manual(values = pal_FG, drop = FALSE,
+                    labels = fg_feature_labels[levels(fgtemp_sum$FG)]) +
   theme_paper(BASE_SIZE) +
   labs(
     title = "Two-way interaction: functional strategy group × warming (UI2-averaged)",
     subtitle = "glmmTMB fixed effects; fast 95% CI. (Average over UI2 within each draw.)",
     x = "Standardised mean temperature anomaly (StdTmeanAnomalyRS)",
     y = "Predicted occurrence probability",
-    color = "FG",
-    fill = "FG"
+    color = "Functional strategy group",
+    fill = "Functional strategy group"
   )
 save_plot_3formats(p_fgtemp, "Fig7_TwoWay_FG_by_Warming_UI2averaged_ABS_glmmTMB_fastCI", dir_plots2,
                    width = 10.6, height = 6.6)
@@ -1084,28 +1126,38 @@ p_sim_UI2FG <- predict_prob_sims_tmb(m_FG_tmb, nd_UI2FG,
                                      nsim = NSIM_CI, seed = SEED_CI + 30, re_form = NA)
 ui2fg_sum <- cbind(nd_UI2FG, as.data.frame(summ_prob_sims(p_sim_UI2FG)))
 ui2fg_sum$UI2 <- factor(ui2fg_sum$UI2, levels = UI2_levels)
-ui2fg_sum$FG <- factor(ui2fg_sum$FG, levels = levels(myocc_fg$FG))
+ui2fg_sum$FG <- factor(ui2fg_sum$FG, levels = fg_plot_levels)
 ui2fg_sum <- ui2fg_sum %>% dplyr::arrange(WarmLabel, FG, UI2)
 
-p_ui2fg <- ggplot(ui2fg_sum, aes(x = UI2, y = mean, color = FG, group = FG)) +
+p_ui2fg <- ggplot(ui2fg_sum, aes(x = UI2, y = mean, color = FG)) +
   geom_hline(yintercept = 0, colour = "grey82", linewidth = 0.4) +
   geom_pointrange(aes(ymin = low95, ymax = high95),
                   position = position_dodge(width = 0.55),
                   linewidth = 0.7) +
   facet_wrap(~ WarmLabel, nrow = 1) +
-  scale_x_discrete(labels = label_map_UI2_wrap) +
-  scale_color_manual(values = pal_FG, drop = FALSE) +
+  scale_x_discrete(labels = label_map_UI2_compact) +
+  scale_color_manual(values = pal_FG, drop = FALSE,
+                     labels = fg_feature_labels[levels(ui2fg_sum$FG)]) +
   theme_paper(BASE_SIZE) +
-  theme(axis.text.x = element_text(size = BASE_SIZE - 1, lineheight = 0.9)) +
+  theme(
+    panel.spacing.x = unit(1.2, "lines"),
+    axis.text.x = element_text(
+      size = BASE_SIZE - 2,
+      lineheight = 0.9,
+      angle = 8,
+      hjust = 1,
+      vjust = 1
+    )
+  ) +
   labs(
     title = "Two-way interaction: land use × FG (at fixed warming levels)",
     subtitle = "glmmTMB fixed effects; fast 95% CI at StdTmeanAnomalyRS = 0, 1, and median.",
     x = NULL,
     y = "Predicted occurrence probability",
-    color = "FG"
+    color = "Functional strategy group"
   )
 save_plot_3formats(p_ui2fg, "Fig8_TwoWay_UI2_by_FG_at_fixedWarming_ABS_glmmTMB_fastCI", dir_plots2,
-                   width = 12.2, height = 5.6)
+                   width = 14.4, height = 6.4)
 add_figure_caption(
   "Fig8_TwoWay_UI2_by_FG_at_fixedWarming_ABS_glmmTMB_fastCI", dir_plots2,
   "Two-way interaction: land use × FG (at fixed warming levels)",

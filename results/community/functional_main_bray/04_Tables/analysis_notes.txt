@@ -1,5 +1,8 @@
 Canonical source script:
-/Users/dingchenchen/lucc/功能同质化.R
+scripts/04_community/03_functional_main_rewrite.R and scripts/03_main_models/01_run_lu_climate_models_main.R
 
-This rewrite keeps Bray total / turnover / gradient in ATA space as the main narrative.
-Functional Jaccard/Sorensen are intentionally excluded from the main plots because ATA>0 is nearly degenerate in the current data.
+This rewrite now shows Bray-Curtis, Jaccard, and Sorensen in parallel.
+Each metric is displayed for total, turnover, and gradient or nestedness components in combined multi-panel figures.
+Public-release note:
+- In the lightweight GitHub release, source_models/*.rds may be omitted to reduce repository size.
+- When those model objects are absent, the coefficient forest is rebuilt from the precomputed fixed-effect table instead.

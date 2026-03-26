@@ -13,18 +13,18 @@
 11    pam 2  0.2701933   948 0.33321617             948,1897
 12   ward 2  0.1659079  1021 0.35887522            1021,1824
    mean_cluster_jaccard min_cluster_jaccard eligible near_best_sil
-1             0.6049155           0.5988452     TRUE          TRUE
-2             0.6205688           0.6180802     TRUE          TRUE
-3             0.5811021           0.5590300    FALSE         FALSE
-4             0.4164724           0.3325678    FALSE         FALSE
-5             0.3233370           0.2731984    FALSE         FALSE
-6             0.5638078           0.5476571    FALSE         FALSE
-7             0.5200266           0.4974256    FALSE         FALSE
-8             0.3178942           0.2681667    FALSE         FALSE
-9             0.5243613           0.5052154    FALSE         FALSE
-10            0.3608206           0.3132337    FALSE         FALSE
-11            0.5275599           0.5122706    FALSE          TRUE
-12            0.4193274           0.4082771    FALSE         FALSE
+1             0.6068319           0.6034797     TRUE          TRUE
+2             0.6166605           0.6131961     TRUE          TRUE
+3             0.5818273           0.5636614    FALSE         FALSE
+4             0.4108549           0.3274315    FALSE         FALSE
+5             0.3047522           0.2643459    FALSE         FALSE
+6             0.5485713           0.5290887    FALSE         FALSE
+7             0.5153398           0.4908988    FALSE         FALSE
+8             0.3220106           0.2661450    FALSE         FALSE
+9             0.5275606           0.4991410    FALSE         FALSE
+10            0.3641014           0.3092547    FALSE         FALSE
+11            0.5393618           0.5196868    FALSE          TRUE
+12            0.4178023           0.4065184    FALSE         FALSE
    final_candidate
 1             TRUE
 2             TRUE

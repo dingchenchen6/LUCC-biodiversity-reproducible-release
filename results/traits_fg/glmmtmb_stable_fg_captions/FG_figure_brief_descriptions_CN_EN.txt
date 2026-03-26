@@ -1,0 +1,47 @@
+FG figure brief descriptions (CN + EN)
+
+[FG_candidate_selection_tradeoff] FG candidate selection: stability, size balance, and silhouette
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/01_Exploration_and_FG_Interpretation
+EN: Among the candidate clustering solutions, Kmeans with K=3 retained a near-best silhouette while satisfying the minimum cluster-size and bootstrap-stability criteria, so it was selected as the final FG scheme.
+CN: 在所有候选聚类方案中，Kmeans 的 K=3 同时满足最小组大小和 bootstrap 稳定性阈值，并保持接近最优的 silhouette，因此被选为最终 FG 方案。
+
+[Fig3_PCA_biplot_FG_RobustStable] Functional strategy space (PCA) and functional strategy groups (FG)
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/01_Exploration_and_FG_Interpretation
+EN: The three FG occupy distinct regions of multivariate trait space, indicating that the robust clustering scheme separates species into interpretable strategy groups rather than an unstable outlier partition.
+CN: 三个 FG 在多维性状空间中占据相对分离的位置，说明这套稳健聚类得到的是可解释的功能策略组，而不是由离群物种驱动的不稳定划分。
+
+[Fig4_FG_trait_profiles_Zscore_bar] Trait syndromes defining functional strategy groups (FG)
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/01_Exploration_and_FG_Interpretation
+EN: FG1 is associated with longer generation length and larger body size, FG2 with broader thermal range, habitat breadth and clutch size, whereas FG3 is generally below the overall mean for most traits.
+CN: FG1 主要表现为较长世代时间和较大体型，FG2 主要表现为较宽热幅、较广生境和较高窝卵数，而 FG3 在多数性状上整体低于总体平均水平。
+
+[Fig5_FG_trait_signatures_heatmap_Zscore] Functional strategy group signatures across traits
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/01_Exploration_and_FG_Interpretation
+EN: The heatmap highlights complementary trait syndromes across FG, with FG1 dominated by slow-history traits, FG2 by broader niche and fecundity traits, and FG3 by comparatively low scores across several traits.
+CN: 热图清楚展示了各 FG 之间互补的性状组合：FG1 偏向慢生活史性状，FG2 偏向较宽生态位和较高繁殖输出，而 FG3 在多个性状上相对较低。
+
+[Fig1_ThreeWay_ABS_UI2_Temp_FG_glmmTMB_fastCI] Occurrence responses to land use and warming differ among functional strategy groups
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/03_Plots_ThreeWay_ABS_PCT
+EN: Predicted occurrence probability changes across the warming gradient differ among land-use types and among FG, supporting a heterogeneous three-way interaction between land use, warming and functional strategy.
+CN: 沿变暖梯度的预测出现概率在不同土地利用类型之间、也在不同 FG 之间存在明显差异，支持土地利用、变暖与功能策略之间存在异质性的三重交互。
+
+[Fig2_ThreeWay_PCT_vsPV0_UI2_Temp_FG_glmmTMB_fastCI] Relative warming responses of occurrence probability across land uses and strategy groups
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/03_Plots_ThreeWay_ABS_PCT
+EN: Relative change from the primary-vegetation baseline differs strongly among FG and land-use contexts, showing that warming sensitivity depends on both ecological strategy and land-use background.
+CN: 相对于原始植被基线的变化幅度在不同 FG 和不同土地利用背景下明显不同，说明变暖敏感性同时依赖于物种功能策略和土地利用环境。
+
+[Fig6_TwoWay_UI2_by_Warming_FGaveraged_ABS_glmmTMB_fastCI] Two-way interaction: land use × warming (FG-averaged)
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/04_Plots_TwoWay_PaperGrade
+EN: After averaging over FG composition, land-use types still differ in both baseline occurrence and warming-response shape, indicating that land use exerts an overall filtering effect beyond FG-specific responses.
+CN: 在对 FG 组成加权平均之后，不同土地利用类型在基线出现概率和随变暖变化的曲线形状上仍然不同，说明土地利用具有超越 FG 差异的总体过滤效应。
+
+[Fig7_TwoWay_FG_by_Warming_UI2averaged_ABS_glmmTMB_fastCI] Two-way interaction: functional strategy group × warming (UI2-averaged)
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/04_Plots_TwoWay_PaperGrade
+EN: After averaging over land-use composition, FG still differ in warming-response trajectories, confirming that the FG scheme captures biologically meaningful variation in climate sensitivity.
+CN: 在对土地利用组成加权平均之后，不同 FG 的变暖响应轨迹仍然不同，说明这套 FG 划分确实捕捉到了具有生物学意义的气候敏感性差异。
+
+[Fig8_TwoWay_UI2_by_FG_at_fixedWarming_ABS_glmmTMB_fastCI] Two-way interaction: land use × FG (at fixed warming levels)
+Path: /Users/dingchenchen/lucc/glmmTMB_occurrence_FG_RobustPCAKmeans_FULL_plusTwoWay/04_Plots_TwoWay_PaperGrade
+EN: At fixed warming levels, the rank order and separation among FG vary across land-use types, showing that land-use filtering and functional strategy interact in shaping occurrence probability.
+CN: 在固定变暖水平下，不同土地利用类型中的 FG 排序和差异幅度并不一致，说明土地利用过滤作用与功能策略共同塑造了物种出现概率。
+
