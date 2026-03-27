@@ -388,8 +388,7 @@ fml <- bf(
   Occur ~ UI2 * StdTmeanAnomalyRS * FG +
     (1 || SS) + (1 || SSBS) + (1 || Best_guess_binomial),
   family = bernoulli(link = "logit"),
-  decomp = "QR",
-  sparse = TRUE
+  decomp = "QR"
 )
 
 pri <- c(

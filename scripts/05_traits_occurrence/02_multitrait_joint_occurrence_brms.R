@@ -395,8 +395,7 @@ joint_formula <- bf(
     )
   ),
   family = bernoulli(link = "logit"),
-  decomp = "QR",
-  sparse = TRUE
+  decomp = "QR"
 )
 
 pri <- c(
