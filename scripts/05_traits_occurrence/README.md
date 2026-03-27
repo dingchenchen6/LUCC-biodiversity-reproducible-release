@@ -2,6 +2,7 @@
 
 ## Recommended Bayesian mainline
 
+- `01_install_rq3_brms_server_dependencies.R`
 - `00_run_rq3_brms_server.R`
 - `run_rq3_brms_pipeline_nohup.sh`
 - `02_multitrait_joint_occurrence_brms.R`
@@ -24,6 +25,7 @@ Recommended background launch:
 
 ```bash
 cd /path/to/LUCC_reproducible_release_publish
+Rscript scripts/05_traits_occurrence/01_install_rq3_brms_server_dependencies.R
 bash scripts/05_traits_occurrence/run_rq3_brms_pipeline_nohup.sh
 ```
 

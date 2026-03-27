@@ -14,6 +14,7 @@ Run the trait-mediated occurrence analyses as a coherent Bayesian pipeline that 
 
 ## Main scripts
 
+- `scripts/05_traits_occurrence/01_install_rq3_brms_server_dependencies.R`
 - `scripts/05_traits_occurrence/01_single_trait_threeway_occurrence.R`
 - `scripts/05_traits_occurrence/02_multitrait_joint_occurrence_brms.R`
 - `scripts/05_traits_occurrence/04_fg_stable_brms.R`
@@ -24,6 +25,7 @@ Run the trait-mediated occurrence analyses as a coherent Bayesian pipeline that 
 
 ```bash
 cd LUCC_reproducible_release_publish
+Rscript scripts/05_traits_occurrence/01_install_rq3_brms_server_dependencies.R
 bash scripts/05_traits_occurrence/run_rq3_brms_pipeline_nohup.sh
 ```
 
