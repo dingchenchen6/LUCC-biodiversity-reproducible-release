@@ -395,12 +395,12 @@ joint_formula <- bf(
     )
   ),
   family = bernoulli(link = "logit"),
-  decomp = "QR"
+  decomp = "QR",
+  sparse = TRUE
 )
 
 pri <- c(
   prior(normal(0, 0.5), class = "b"),
-  prior(normal(0, 1.5), class = "Intercept"),
   prior(exponential(2), class = "sd")
 )
 
@@ -421,7 +421,6 @@ if (file.exists(fit_file) && !BRMS_FORCE_REFIT) {
     seed = BRMS_SEED,
     control = list(adapt_delta = BRMS_ADAPT, max_treedepth = BRMS_TREEDEPTH),
     save_pars = save_pars(all = FALSE, group = FALSE),
-    sparse = TRUE,
     normalize = FALSE,
     init = 0,
     refresh = 100
