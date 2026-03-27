@@ -24,3 +24,8 @@ local_only/
 # Large public-release preview models can be regenerated locally
 results/community/compositional_main_bray/source_models/
 results/community/functional_main_bray/source_models/
+
+# Local-only conceptual or launcher test outputs
+results/traits_fg/conceptual_illustration/
+results/traits_fg/rq3_brms_server_runner/
+scripts/05_traits_occurrence/99_fg_conceptual_illustration.R

@@ -17,6 +17,7 @@ suppressPackageStartupMessages({
   library(stringr)
   library(bayesplot)
   library(posterior)
+  library(parallel)
 })
 
 if (requireNamespace("cmdstanr", quietly = TRUE)) {
@@ -73,6 +74,19 @@ pal_UI2 <- c("#009E73", "#0072B2", "#E69F00", "#D55E00", "#CC79A7")
 names(pal_UI2) <- UI2_levels
 
 pal_FG <- c("FG1" = "#F05A5A", "FG2" = "#19B51E", "FG3" = "#4E79FF")
+FG_levels <- c("FG1", "FG2", "FG3")
+
+fg_feature_labels <- c(
+  "FG1" = "FG1: slow-history, larger-bodied, longer generation length",
+  "FG2" = "FG2: broader niche, wider thermal breadth, higher fecundity",
+  "FG3" = "FG3: restricted range, lower dispersal, more specialist-like"
+)
+
+fg_strip_labels <- c(
+  "FG1" = "FG1\nslow-history / larger body size /\nlonger generation length",
+  "FG2" = "FG2\nbroader niche / thermal breadth /\nhigher fecundity",
+  "FG3" = "FG3\nrestricted range / lower dispersal /\nmore specialist-like"
+)
 
 TITLE_SIZE <- 14
 BASE_SIZE  <- 13
@@ -82,22 +96,28 @@ BASE_TEMP0 <- 0
 N_TEMP <- 240
 
 BRMS_CHAINS <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_CHAINS", "4")))
-BRMS_ITER   <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_ITER", "2500")))
-BRMS_WARMUP <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_WARMUP", "1250")))
+BRMS_ITER   <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_ITER", "6000")))
+BRMS_WARMUP <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_WARMUP", "3000")))
 BRMS_THREADS <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_THREADS", "2")))
 BRMS_CORES   <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_CORES", as.character(min(BRMS_CHAINS, parallel::detectCores())))))
-BRMS_ADAPT   <- suppressWarnings(as.numeric(Sys.getenv("FG_BRMS_ADAPT_DELTA", "0.97")))
-BRMS_TREEDEPTH <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_MAX_TREEDEPTH", "13")))
+BRMS_ADAPT   <- suppressWarnings(as.numeric(Sys.getenv("FG_BRMS_ADAPT_DELTA", "0.99")))
+BRMS_TREEDEPTH <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_MAX_TREEDEPTH", "15")))
+BRMS_BACKEND <- Sys.getenv("FG_BRMS_BACKEND", unset = "cmdstanr")
+BRMS_FORCE_REFIT <- identical(tolower(Sys.getenv("FG_BRMS_FORCE_REFIT", "0")), "1")
+BRMS_GRAINSIZE <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_GRAINSIZE", "1000")))
+SMOKE_N <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_SMOKE_N", "0")))
 BRMS_SEED <- 123
-N_DRAWS_PRED <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_NDRAWS_PRED", "1200")))
+N_DRAWS_PRED <- suppressWarnings(as.integer(Sys.getenv("FG_BRMS_NDRAWS_PRED", "1600")))
 if (!is.finite(BRMS_CHAINS) || BRMS_CHAINS < 2) BRMS_CHAINS <- 4
-if (!is.finite(BRMS_ITER) || BRMS_ITER < 1500) BRMS_ITER <- 2500
-if (!is.finite(BRMS_WARMUP) || BRMS_WARMUP < 500) BRMS_WARMUP <- floor(BRMS_ITER / 2)
+if (!is.finite(BRMS_ITER) || BRMS_ITER < 3000) BRMS_ITER <- 6000
+if (!is.finite(BRMS_WARMUP) || BRMS_WARMUP < 1000) BRMS_WARMUP <- floor(BRMS_ITER / 2)
 if (!is.finite(BRMS_THREADS) || BRMS_THREADS < 1) BRMS_THREADS <- 1
 if (!is.finite(BRMS_CORES) || BRMS_CORES < 1) BRMS_CORES <- min(BRMS_CHAINS, parallel::detectCores())
-if (!is.finite(BRMS_ADAPT) || BRMS_ADAPT < 0.9) BRMS_ADAPT <- 0.97
-if (!is.finite(BRMS_TREEDEPTH) || BRMS_TREEDEPTH < 10) BRMS_TREEDEPTH <- 13
-if (!is.finite(N_DRAWS_PRED) || N_DRAWS_PRED < 200) N_DRAWS_PRED <- 1200
+if (!is.finite(BRMS_ADAPT) || BRMS_ADAPT < 0.95) BRMS_ADAPT <- 0.99
+if (!is.finite(BRMS_TREEDEPTH) || BRMS_TREEDEPTH < 12) BRMS_TREEDEPTH <- 15
+if (!is.finite(BRMS_GRAINSIZE) || BRMS_GRAINSIZE < 1) BRMS_GRAINSIZE <- 1000
+if (!is.finite(N_DRAWS_PRED) || N_DRAWS_PRED < 400) N_DRAWS_PRED <- 1600
+if (!BRMS_BACKEND %in% c("cmdstanr", "rstan")) BRMS_BACKEND <- "cmdstanr"
 
 options(mc.cores = BRMS_CORES)
 
@@ -115,11 +135,11 @@ save_plot_3formats <- function(p, filename_noext, outdir,
   print(p)
   if (requireNamespace("ragg", quietly = TRUE)) {
     ggsave(png_file, p, width = width, height = height, dpi = dpi,
-           device = ragg::agg_png, bg = "white")
+           device = ragg::agg_png, bg = "white", limitsize = FALSE)
   } else {
-    ggsave(png_file, p, width = width, height = height, dpi = dpi, bg = "white")
+    ggsave(png_file, p, width = width, height = height, dpi = dpi, bg = "white", limitsize = FALSE)
   }
-  ggsave(pdf_file, p, width = width, height = height)
+  ggsave(pdf_file, p, width = width, height = height, bg = "white", limitsize = FALSE)
 
   if (exists("topptx")) {
     topptx(p, pptx_file)
@@ -127,7 +147,11 @@ save_plot_3formats <- function(p, filename_noext, outdir,
              requireNamespace("rvg", quietly = TRUE)) {
     doc <- officer::read_pptx()
     doc <- officer::add_slide(doc, layout = "Title and Content", master = "Office Theme")
-    doc <- officer::ph_with(doc, rvg::dml(ggobj = p), location = officer::ph_location_fullsize())
+    body_loc <- tryCatch(
+      officer::ph_location_type(type = "body"),
+      error = function(e) officer::ph_location_fullsize()
+    )
+    doc <- officer::ph_with(doc, rvg::dml(ggobj = p), location = body_loc)
     print(doc, target = pptx_file)
   }
   invisible(TRUE)
@@ -138,11 +162,14 @@ theme_paper <- function(base_size = 13) {
     theme(
       plot.title = element_text(face = "bold", size = TITLE_SIZE),
       plot.subtitle = element_text(size = base_size),
+      panel.spacing = unit(1.0, "lines"),
       strip.background = element_rect(fill = "white", color = "black"),
-      strip.text = element_text(face = "bold"),
+      strip.text = element_text(face = "bold", lineheight = 0.95),
       axis.title = element_text(face = "bold"),
+      axis.title.x = element_text(margin = margin(t = 8)),
+      axis.title.y = element_text(margin = margin(r = 8)),
       legend.title = element_text(face = "bold"),
-      plot.margin = margin(t = 10, r = 16, b = 16, l = 10)
+      plot.margin = margin(t = 12, r = 24, b = 18, l = 14)
     )
 }
 
@@ -292,15 +319,37 @@ myocc_fg$UI2 <- factor(myocc_fg$UI2, levels = UI2_levels)
 myocc_fg$SS <- factor(myocc_fg$SS)
 myocc_fg$SSBS <- factor(myocc_fg$SSBS)
 myocc_fg$Best_guess_binomial <- factor(myocc_fg$Best_guess_binomial)
-myocc_fg$FG <- factor(myocc_fg$FG)
+myocc_fg$FG <- factor(myocc_fg$FG, levels = FG_levels)
 
-FG_base <- names(which.max(table(myocc_fg$FG)))
+if (is.finite(SMOKE_N) && SMOKE_N > 0 && SMOKE_N < nrow(myocc_fg)) {
+  set.seed(BRMS_SEED)
+  myocc_fg <- myocc_fg %>%
+    dplyr::group_by(UI2) %>%
+    dplyr::slice_sample(n = max(1, min(dplyr::n(), ceiling(SMOKE_N / length(UI2_levels))))) %>%
+    dplyr::ungroup()
+}
+
+FG_base <- FG_levels[1]
 myocc_fg$FG <- relevel(myocc_fg$FG, ref = FG_base)
 
 cat("Stable FG data loaded.\n")
 cat("Rows:", nrow(myocc_fg), "\n")
 cat("Species:", dplyr::n_distinct(myocc_fg$Best_guess_binomial), "\n")
 cat("Baseline FG:", FG_base, "\n")
+
+run_manifest <- data.frame(
+  metric = c(
+    "backend", "chains", "iter", "warmup", "cores", "threads_per_chain",
+    "adapt_delta", "max_treedepth", "prediction_draws",
+    "smoke_n", "rows_used", "species_used", "seed"
+  ),
+  value = c(
+    BRMS_BACKEND, BRMS_CHAINS, BRMS_ITER, BRMS_WARMUP, BRMS_CORES, BRMS_THREADS,
+    BRMS_ADAPT, BRMS_TREEDEPTH, N_DRAWS_PRED,
+    SMOKE_N, nrow(myocc_fg), dplyr::n_distinct(myocc_fg$Best_guess_binomial), BRMS_SEED
+  )
+)
+utils::write.csv(run_manifest, file.path(dir_tables, "FG_brms_run_manifest.csv"), row.names = FALSE)
 
 ## Record support figure / 数据支撑图
 support_df <- myocc_fg %>%
@@ -338,7 +387,8 @@ add_figure_caption(
 fml <- bf(
   Occur ~ UI2 * StdTmeanAnomalyRS * FG +
     (1 || SS) + (1 || SSBS) + (1 || Best_guess_binomial),
-  family = bernoulli(link = "logit")
+  family = bernoulli(link = "logit"),
+  decomp = "QR"
 )
 
 pri <- c(
@@ -349,14 +399,14 @@ pri <- c(
 
 fit_file <- file.path(dir_models, "brms_Occ_UI2_Temp_FG_stable_cmdstanr.rds")
 
-if (file.exists(fit_file)) {
+if (file.exists(fit_file) && !BRMS_FORCE_REFIT) {
   message("Loading existing brms fit: ", fit_file)
   m_FG_brms <- readRDS(fit_file)
 } else {
   brm_args <- list(
     formula = fml,
     data = droplevels(myocc_fg),
-    backend = "cmdstanr",
+    backend = BRMS_BACKEND,
     prior = pri,
     chains = BRMS_CHAINS,
     iter = BRMS_ITER,
@@ -364,11 +414,14 @@ if (file.exists(fit_file)) {
     cores = BRMS_CORES,
     seed = BRMS_SEED,
     control = list(adapt_delta = BRMS_ADAPT, max_treedepth = BRMS_TREEDEPTH),
-    save_pars = save_pars(all = FALSE),
+    save_pars = save_pars(all = FALSE, group = FALSE),
+    sparse = TRUE,
+    normalize = FALSE,
+    init = 0,
     refresh = 100
   )
   if (BRMS_THREADS > 1) {
-    brm_args$threads <- threading(BRMS_THREADS)
+    brm_args$threads <- threading(BRMS_THREADS, grainsize = BRMS_GRAINSIZE)
   }
   m_FG_brms <- do.call(brm, brm_args)
   saveRDS(m_FG_brms, fit_file)
@@ -507,11 +560,15 @@ ep0 <- posterior_epred(
 summ_abs3 <- apply(ep3, 2, summ_draws)
 pred_abs3 <- cbind(nd3, as.data.frame(t(summ_abs3))) %>%
   dplyr::arrange(FG, UI2, StdTmeanAnomalyRS)
+pred_abs3$FG <- factor(pred_abs3$FG, levels = FG_levels)
+pred_abs3$UI2 <- factor(pred_abs3$UI2, levels = UI2_levels)
 
 ep_pct3 <- percent_change_draws(ep3, ep0)
 summ_pct3 <- apply(ep_pct3, 2, summ_draws)
 pred_pct3 <- cbind(nd3, as.data.frame(t(summ_pct3))) %>%
   dplyr::arrange(FG, UI2, StdTmeanAnomalyRS)
+pred_pct3$FG <- factor(pred_pct3$FG, levels = FG_levels)
+pred_pct3$UI2 <- factor(pred_pct3$UI2, levels = UI2_levels)
 
 saveRDS(pred_abs3, file.path(dir_data, "pred_abs_threeway_brms.rds"))
 saveRDS(pred_pct3, file.path(dir_data, "pred_pct_threeway_vsPV0_brms.rds"))
@@ -519,10 +576,11 @@ saveRDS(pred_pct3, file.path(dir_data, "pred_pct_threeway_vsPV0_brms.rds"))
 p_abs3 <- ggplot(pred_abs3, aes(x = StdTmeanAnomalyRS, colour = UI2, fill = UI2)) +
   geom_ribbon(aes(ymin = low95, ymax = high95), alpha = 0.22, colour = NA) +
   geom_line(aes(y = mean), linewidth = 1.05) +
-  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2)) +
+  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2_wrap, FG = fg_strip_labels)) +
   scale_colour_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   scale_fill_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   theme_paper(BASE_SIZE) +
+  theme(strip.text.y = element_text(angle = 0)) +
   labs(
     title = "Occurrence responses to land use and warming differ among functional strategy groups",
     subtitle = paste0("brms posterior means; ", ndraws_pred_use, " posterior draws for prediction summaries."),
@@ -542,10 +600,11 @@ p_pct3 <- ggplot(pred_pct3, aes(x = StdTmeanAnomalyRS, colour = UI2, fill = UI2)
   geom_ribbon(aes(ymin = low95, ymax = high95), alpha = 0.22, colour = NA) +
   geom_line(aes(y = mean), linewidth = 1.05) +
   geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.5) +
-  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2)) +
+  facet_grid(FG ~ UI2, labeller = labeller(UI2 = label_map_UI2_wrap, FG = fg_strip_labels)) +
   scale_colour_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   scale_fill_manual(values = pal_UI2, drop = FALSE, guide = "none") +
   theme_paper(BASE_SIZE) +
+  theme(strip.text.y = element_text(angle = 0)) +
   labs(
     title = "Relative warming responses of occurrence probability across land uses and strategy groups",
     subtitle = paste0(
@@ -632,12 +691,15 @@ fgtemp_df <- nd_FGTemp %>%
   dplyr::arrange(FG, StdTmeanAnomalyRS)
 summ_FGTemp <- apply(collapsed_FGTemp, 2, summ_draws)
 pred_FGTemp <- cbind(fgtemp_df, as.data.frame(t(summ_FGTemp)))
+pred_FGTemp$FG <- factor(pred_FGTemp$FG, levels = FG_levels)
 
 p_fgtemp <- ggplot(pred_FGTemp, aes(x = StdTmeanAnomalyRS, y = mean, colour = FG, fill = FG)) +
   geom_ribbon(aes(ymin = low95, ymax = high95), alpha = 0.20, colour = NA) +
   geom_line(linewidth = 1.05) +
-  scale_colour_manual(values = pal_FG, drop = FALSE) +
-  scale_fill_manual(values = pal_FG, drop = FALSE) +
+  scale_colour_manual(values = pal_FG, drop = FALSE,
+                      labels = fg_feature_labels[levels(pred_FGTemp$FG)]) +
+  scale_fill_manual(values = pal_FG, drop = FALSE,
+                    labels = fg_feature_labels[levels(pred_FGTemp$FG)]) +
   theme_paper(BASE_SIZE) +
   labs(
     title = "Two-way interaction: functional strategy group × warming (UI2-averaged)",
@@ -680,26 +742,32 @@ ep_UI2FG <- posterior_epred(
 summ_UI2FG <- apply(ep_UI2FG, 2, summ_draws)
 pred_UI2FG <- cbind(nd_UI2FG, as.data.frame(t(summ_UI2FG))) %>%
   dplyr::arrange(WarmLabel, FG, UI2)
+pred_UI2FG$FG <- factor(pred_UI2FG$FG, levels = FG_levels)
+pred_UI2FG$UI2 <- factor(pred_UI2FG$UI2, levels = UI2_levels)
 
-p_ui2fg <- ggplot(pred_UI2FG, aes(x = UI2, y = mean, colour = FG, group = FG)) +
+p_ui2fg <- ggplot(pred_UI2FG, aes(x = UI2, y = mean, colour = FG)) +
   geom_hline(yintercept = 0, colour = "grey82", linewidth = 0.4) +
   geom_pointrange(aes(ymin = low95, ymax = high95),
                   position = position_dodge(width = 0.55),
                   linewidth = 0.7) +
   facet_wrap(~ WarmLabel, nrow = 1) +
   scale_x_discrete(labels = label_map_UI2_wrap) +
-  scale_colour_manual(values = pal_FG, drop = FALSE) +
+  scale_colour_manual(values = pal_FG, drop = FALSE,
+                      labels = fg_feature_labels[levels(pred_UI2FG$FG)]) +
   theme_paper(BASE_SIZE) +
-  theme(axis.text.x = element_text(size = BASE_SIZE - 1, lineheight = 0.9)) +
+  theme(
+    panel.spacing.x = unit(1.2, "lines"),
+    axis.text.x = element_text(size = BASE_SIZE - 2, lineheight = 0.9, angle = 8, hjust = 1, vjust = 1)
+  ) +
   labs(
     title = "Two-way interaction: land use × FG (at fixed warming levels)",
     subtitle = "Posterior means and 95% credible intervals at StdTmeanAnomalyRS = 0, 1, and median.",
     x = NULL,
     y = "Predicted probability of occurrence",
-    colour = "FG"
+    colour = "Functional strategy group"
   )
 save_plot_3formats(p_ui2fg, "Fig8_TwoWay_UI2_by_FG_at_fixedWarming_ABS_brms", dir_plots2,
-                   width = 12.4, height = 5.9)
+                   width = 14.4, height = 6.4)
 add_figure_caption(
   "Fig8_TwoWay_UI2_by_FG_at_fixedWarming_ABS_brms", dir_plots2,
   "Two-way interaction: land use × FG (at fixed warming levels)",
