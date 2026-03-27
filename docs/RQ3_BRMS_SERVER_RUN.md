@@ -31,23 +31,29 @@ bash scripts/05_traits_occurrence/run_rq3_brms_pipeline_nohup.sh
 
 ## Recommended robust sampling settings
 
-These defaults are already encoded in the scripts, but can be overridden from the shell:
+These defaults can be overridden from the shell. For server 23, the current
+recommended conservative-stable profile is:
 
 ```bash
 export MT_BRMS_CHAINS=4
-export MT_BRMS_ITER=6000
-export MT_BRMS_WARMUP=3000
-export MT_BRMS_THREADS=2
+export MT_BRMS_CORES=4
+export MT_BRMS_ITER=8000
+export MT_BRMS_WARMUP=4000
+export MT_BRMS_THREADS=4
 export MT_BRMS_ADAPT_DELTA=0.99
 export MT_BRMS_MAX_TREEDEPTH=15
 
 export FG_BRMS_CHAINS=4
-export FG_BRMS_ITER=6000
-export FG_BRMS_WARMUP=3000
-export FG_BRMS_THREADS=2
+export FG_BRMS_CORES=4
+export FG_BRMS_ITER=8000
+export FG_BRMS_WARMUP=4000
+export FG_BRMS_THREADS=4
 export FG_BRMS_ADAPT_DELTA=0.99
 export FG_BRMS_MAX_TREEDEPTH=15
 ```
+
+This profile keeps the run conservative and stable while still using parallel
+sampling on the server.
 
 ## Selectively running modules
 
